@@ -1,12 +1,12 @@
 import React from 'react';
-import './gallery.css'  
- 
-class Gallery extends React.Component {
+import './gallery.css'
 
+class Gallery extends React.Component { 
+ 
    constructor(props) {
       super(props)
-      this.state = {
-         gallery: [
+      if (!localStorage.getItem('gallery-react')) {
+         let galleryDefault = [
             { id: 'photo1570296458531', edit: false, comment: 'tree on a background of stars', url: 'https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' },
             { id: 'photo1570296458533', edit: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
             { id: 'photo1570296458534', edit: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
@@ -16,7 +16,15 @@ class Gallery extends React.Component {
             { id: 'photo1570296458538', edit: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
             { id: 'photo1570296458539', edit: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
             { id: 'photo1570296458540', edit: false, comment: 'tree on a background of stars end', url: 'https://bigpicture.ru/wp-content/uploads/2011/06/1309.jpg' },
-         ],
+         ]
+         localStorage.setItem('gallery-react', JSON.stringify(galleryDefault))
+      }
+
+      this.gallery = JSON.parse(localStorage.getItem('gallery-react'))
+      this.gallery.map(item => item.edit = false)
+
+      this.state = {
+         gallery: this.gallery,
          urlGigImg: '',
          showImg: false,
          showModalAdd: false,
@@ -29,6 +37,47 @@ class Gallery extends React.Component {
       this.handleChangeNewComment = this.handleChangeNewComment.bind(this)
       this.handleChangeNewUrl = this.handleChangeNewUrl.bind(this)
       this.addNewItem = this.addNewItem.bind(this)
+   }
+
+   // gal() {
+   //    let a = [
+   //       { id: 'photo1570296458531', edit: false, comment: 'tree on a background of stars', url: 'https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' },
+   //       { id: 'photo1570296458533', edit: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
+   //       { id: 'photo1570296458534', edit: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
+   //       { id: 'photo1570296458535', edit: false, comment: 'trees in the field', url: 'https://bigpicture.ru/wp-content/uploads/2011/06/1309.jpg' },
+   //       { id: 'photo1570296458536', edit: false, comment: 'road in the field', url: 'https://cs8.pikabu.ru/post_img/big/2017/12/24/6/1514109360155876505.jpg' },
+   //       { id: 'photo1570296458537', edit: false, comment: 'mountains on the background of stars', url: 'https://spacegid.com/wp-content/uploads/2015/04/IMG_0531-1024x683.jpg' },
+   //       { id: 'photo1570296458538', edit: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
+   //       { id: 'photo1570296458539', edit: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
+   //       { id: 'photo1570296458540', edit: false, comment: 'tree on a background of stars end', url: 'https://bigpicture.ru/wp-content/uploads/2011/06/1309.jpg' },
+   //    ]
+   // }
+
+
+   handleChange(event) {
+      this.setState(
+         this.state.gallery.map(item => {
+            if (item.edit) item.comment = event.target.value
+            return item.comment
+         })
+      )
+      localStorage.removeItem('gallery-react')
+      localStorage.setItem('gallery-react', JSON.stringify(this.state.gallery))
+   }
+
+   toggleInput(item) {
+      this.setState(
+         this.state.gallery.map(photo => {
+            if (photo.id === item.id) {
+               photo.edit = !photo.edit
+               return photo
+            }
+            else {
+               photo.edit = false
+               return photo
+            }
+         })
+      )
    }
 
    handleChangeNewComment(event) {
@@ -51,6 +100,7 @@ class Gallery extends React.Component {
       }
       clone.push(newItem)
       this.setState({ gallery: clone })
+      this.updateLocalStor()
    }
 
 
@@ -58,25 +108,11 @@ class Gallery extends React.Component {
    toddleModalAdd() {
       let clone = !this.state.showModalAdd
       this.setState({ showModalAdd: clone })
-
-
-      // this.setState(() => this.state.showModalAdd = !this.state.showModalAdd)
    }
 
-   handleChange(event) {
-      this.setState(
-         this.state.gallery.map(item => {
-            if (item.edit) {
-               item.comment = event.target.value
-            }
-            return item.comment
-         })
-      )
-   }
 
    handleClickImg(url) {
       let clone = !this.state.showImg
-      // console.log(url);
 
       this.setState({
          showImg: clone,
@@ -85,31 +121,26 @@ class Gallery extends React.Component {
    }
 
 
-
-   toggleInput(item) {
-      this.setState(
-         this.state.gallery.map(photo => {
-            if (photo.id === item.id) {
-               photo.edit = !photo.edit
-               return photo
-            }
-            else {
-               photo.edit = false
-               return photo
-            }
-         })
-      )
+   updateLocalStor() {
+      setTimeout(() => {
+         localStorage.removeItem('gallery-react')
+         localStorage.setItem('gallery-react', JSON.stringify(this.state.gallery))
+      }, 100);
    }
 
+
    removeItemGallery(id) {
+
       let clone = [...this.state.gallery]
       clone = clone.filter(itemGallery => itemGallery.id !== id)
       this.setState({ gallery: clone })
+      this.updateLocalStor()
+
    }
 
    renderItem(item) {
       return (
-         <div id={item.id} key={item.id}     
+         <div id={item.id} key={item.id}
             className='gallery__card' >
             <img src={item.url}
                className='gallery__img'
@@ -135,9 +166,6 @@ class Gallery extends React.Component {
                alt={item.id}
                onClick={() => {
                   this.handleClickImg(item.url)
-                  console.log(item.url);
-
-                  // this.state.urlGigImg = item.url
                }} />
 
             <div className='gallery__box-comment' >
@@ -211,16 +239,8 @@ class Gallery extends React.Component {
 
    renderItemsGallery() {
       return this.state.gallery.map(item => {
-         if (item.edit) {
-            return (
-               this.renderItemEdit(item)
-            )
-         }
-         else {
-            return (
-               this.renderItem(item)
-            )
-         }
+         if (item.edit) return (this.renderItemEdit(item))
+         else return (this.renderItem(item))
       })
    }
 
@@ -233,21 +253,7 @@ class Gallery extends React.Component {
       )
    }
 
-   galleryDefault() {
-      if (!localStorage.getItem('gallery')) {
-         let galleryDefault = [
-            { id: 'photo1570296458531', recomment: false, comment: 'tree on a background of stars', url: 'https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' },
-            { id: 'photo1570296458533', recomment: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
-            { id: 'photo1570296458534', recomment: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
-            { id: 'photo1570296458535', recomment: false, comment: 'trees in the field', url: 'https://bigpicture.ru/wp-content/uploads/2011/06/1309.jpg' },
-            { id: 'photo1570296458536', recomment: false, comment: 'road in the field', url: 'https://cs8.pikabu.ru/post_img/big/2017/12/24/6/1514109360155876505.jpg' },
-            { id: 'photo1570296458537', recomment: false, comment: 'mountains on the background of stars', url: 'https://spacegid.com/wp-content/uploads/2015/04/IMG_0531-1024x683.jpg' },
-            { id: 'photo1570296458538', recomment: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
-            { id: 'photo1570296458539', recomment: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
-         ];
-         localStorage.setItem('gallery', JSON.stringify(galleryDefault));
-      }
-   }
+
 
 
    render() {

@@ -30,7 +30,7 @@
     }
 
     &_open-modal {
-      margin: 20px 0;
+      margin: 20px 5px;
       &:hover {
         background: rgb(31, 28, 28);
       }
@@ -112,7 +112,7 @@
   }
 
   &__modal {
-    position: fixed;
+    position: fixed; 
     @include center();
     z-index: 2;
     top: 0;
