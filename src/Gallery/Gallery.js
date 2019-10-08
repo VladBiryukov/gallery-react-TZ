@@ -1,45 +1,6 @@
 import React from 'react';
-import './gallery.css'
-// function name() {
-
-//    function Card(props) {
-//       return <div id={props.item.id} className='gallery__card'></div>
-//    }
-//    function BoxComment(props) {
-//       return <div className='gallery__box-comment' />
-//    }
-//    function TextArea(props) {
-//       return <textarea className='gallery__input-change' />
-//    }
-//    function Comment(props) {
-//       return <div className='gallery__comment'>{props.item.comment}</div>
-//    }
-//    function Img(props) {
-//       return <img src={props.item.url} className='gallery__img' alt={props.item.id} />
-//    }
-//    function Close(params) {
-//       return <div className='gallery__close'>×</div>
-//    }
-
-//    function ItemGallery(props) {
-
-//       return (
-
-//          <div id={props.item.id} className='gallery__card'>
-//             <img src={props.item.url} className='gallery__img' alt={props.item.id} />
-//             <div className='gallery__box-comment'>
-//                <textarea className='gallery__input-change'></textarea>
-//                <div className='gallery__comment'>{props.item.comment}</div>
-//             </div>
-//             <div className='gallery__close'>×</div>
-//          </div>
-//       )
-
-//    }
-// }
-
-
-
+import './gallery.css'  
+ 
 class Gallery extends React.Component {
 
    constructor(props) {
@@ -56,20 +17,50 @@ class Gallery extends React.Component {
             { id: 'photo1570296458539', edit: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
             { id: 'photo1570296458540', edit: false, comment: 'tree on a background of stars end', url: 'https://bigpicture.ru/wp-content/uploads/2011/06/1309.jpg' },
          ],
-         urlGigImg: 'https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg',
+         urlGigImg: '',
          showImg: false,
-         showModalAdd: false
+         showModalAdd: false,
+         newUrl: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg',
+         newComment: 'Тут произвольный текст',
       }
       this.handleChange = this.handleChange.bind(this)
       this.handleClickImg = this.handleClickImg.bind(this)
       this.toddleModalAdd = this.toddleModalAdd.bind(this)
+      this.handleChangeNewComment = this.handleChangeNewComment.bind(this)
+      this.handleChangeNewUrl = this.handleChangeNewUrl.bind(this)
+      this.addNewItem = this.addNewItem.bind(this)
+   }
+
+   handleChangeNewComment(event) {
+      this.setState({ newComment: event.target.value })
    }
 
 
 
+   handleChangeNewUrl(event) {
+      this.setState({ newUrl: event.target.value })
+   }
+
+   addNewItem() {
+      let clone = [...this.state.gallery]
+      let newItem = {
+         id: `photo${+new Date()}`,
+         edit: false,
+         comment: this.state.newComment,
+         url: this.state.newUrl
+      }
+      clone.push(newItem)
+      this.setState({ gallery: clone })
+   }
+
+
 
    toddleModalAdd() {
-      this.setState(() => this.state.showModalAdd = !this.state.showModalAdd)
+      let clone = !this.state.showModalAdd
+      this.setState({ showModalAdd: clone })
+
+
+      // this.setState(() => this.state.showModalAdd = !this.state.showModalAdd)
    }
 
    handleChange(event) {
@@ -83,8 +74,14 @@ class Gallery extends React.Component {
       )
    }
 
-   handleClickImg() {
-      this.setState(() => this.state.showImg = !this.state.showImg)
+   handleClickImg(url) {
+      let clone = !this.state.showImg
+      // console.log(url);
+
+      this.setState({
+         showImg: clone,
+         urlGigImg: url
+      })
    }
 
 
@@ -105,21 +102,42 @@ class Gallery extends React.Component {
    }
 
    removeItemGallery(id) {
-      this.setState(
-         this.state.gallery = this.state.gallery.filter(itemGallery => {
-            return itemGallery.id !== id
-         })
-      )
+      let clone = [...this.state.gallery]
+      clone = clone.filter(itemGallery => itemGallery.id !== id)
+      this.setState({ gallery: clone })
    }
 
+   renderItem(item) {
+      return (
+         <div id={item.id} key={item.id}     
+            className='gallery__card' >
+            <img src={item.url}
+               className='gallery__img'
+               alt={item.id}
+               onClick={() => {
+                  this.handleClickImg(item.url)
+               }}
+            />
+            <div className='gallery__box-comment'
+               onClick={() => { this.toggleInput(item) }}>
+               <div className='gallery__comment'>{item.comment}</div>
+            </div>
+            <div className='gallery__close'
+               onClick={() => this.removeItemGallery(item.id)}
+            >&times;</div>
+         </div>
+      )
+   }
    renderItemEdit(item) {
       return (
          <div id={item.id} key={item.id} className='gallery__card'>
             <img src={item.url} className='gallery__img'
                alt={item.id}
                onClick={() => {
-                  this.handleClickImg()
-                  this.state.urlGigImg = item.url
+                  this.handleClickImg(item.url)
+                  console.log(item.url);
+
+                  // this.state.urlGigImg = item.url
                }} />
 
             <div className='gallery__box-comment' >
@@ -146,15 +164,34 @@ class Gallery extends React.Component {
    showModalAdd() {
       if (this.state.showModalAdd) {
          return (
-            <div className='gallery__modal'>
+            <div className='gallery__modal'
+               onClick={e => {
+                  if (e.target.className === 'gallery__modal') {
+                     this.toddleModalAdd()
+                  }
+               }}
+            >
                <div className='gallery__modal-content'>
-                  <textarea placeholder='URL' type='text' className='gallery__input gallery__input_url'></textarea>
-                  <textarea placeholder='Commnet' type='text' className='gallery__input gallery__input_comment'></textarea>
-                  <div className='gallery__btn gallery__btn_add-post'>Add post</div>
+                  <textarea placeholder='URL' type='text' className='gallery__input gallery__input_url'
+                     defaultValue={this.state.newUrl}
+                     onChange={this.handleChangeNewUrl}
+                  />
+                  <textarea placeholder='Commnet' type='text' className='gallery__input gallery__input_comment'
+                     defaultValue={this.state.newComment}
+                     onChange={this.handleChangeNewComment}
+
+                  />
+                  <div className='gallery__btn gallery__btn_add-post'
+                     onClick={() => {
+                        this.addNewItem()
+                        this.toddleModalAdd()
+                     }}
+                  >Add post</div>
                </div>
             </div>
          )
       }
+      else return null
    }
 
    showBigImg() {
@@ -169,27 +206,7 @@ class Gallery extends React.Component {
       }
    }
 
-   renderItem(item) {
-      return (
-         <div id={item.id} key={item.id} className='gallery__card'>
-            <img src={item.url}
-               className='gallery__img'
-               alt={item.id}
-               onClick={() => {
-                  this.handleClickImg()
-                  this.state.urlGigImg = item.url
-               }}
-            />
-            <div className='gallery__box-comment'
-               onClick={() => { this.toggleInput(item) }}>
-               <div className='gallery__comment'>{item.comment}</div>
-            </div>
-            <div className='gallery__close'
-               onClick={() => this.removeItemGallery(item.id)}
-            >&times;</div>
-         </div>
-      )
-   }
+
 
 
    renderItemsGallery() {
@@ -211,13 +228,7 @@ class Gallery extends React.Component {
    renderBtnAdd() {
       return (
          <div className='gallery__btn gallery__btn_open-modal'
-            onClick={() => {
-
-               this.toddleModalAdd()
-               console.log(this.state.showModalAdd);
-
-            }}
-         >AddPhoto
+            onClick={this.toddleModalAdd}>AddPhoto
          </div>
       )
    }
@@ -245,8 +256,8 @@ class Gallery extends React.Component {
             <div className='container'>
                <div className='gallery__block'>
                   {this.renderBtnAdd()}
+                  {this.showModalAdd()}
                   <div className='gallery__box-cards'>
-                     {this.showModalAdd()}
                      {this.showBigImg()}
                      {this.renderItemsGallery()}
                   </div>
