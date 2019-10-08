@@ -1,8 +1,8 @@
 import React from 'react';
 import './gallery.css'
 
-class Gallery extends React.Component { 
- 
+class Gallery extends React.Component {
+
    constructor(props) {
       super(props)
       if (!localStorage.getItem('gallery-react')) {
@@ -39,30 +39,13 @@ class Gallery extends React.Component {
       this.addNewItem = this.addNewItem.bind(this)
    }
 
-   // gal() {
-   //    let a = [
-   //       { id: 'photo1570296458531', edit: false, comment: 'tree on a background of stars', url: 'https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' },
-   //       { id: 'photo1570296458533', edit: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
-   //       { id: 'photo1570296458534', edit: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
-   //       { id: 'photo1570296458535', edit: false, comment: 'trees in the field', url: 'https://bigpicture.ru/wp-content/uploads/2011/06/1309.jpg' },
-   //       { id: 'photo1570296458536', edit: false, comment: 'road in the field', url: 'https://cs8.pikabu.ru/post_img/big/2017/12/24/6/1514109360155876505.jpg' },
-   //       { id: 'photo1570296458537', edit: false, comment: 'mountains on the background of stars', url: 'https://spacegid.com/wp-content/uploads/2015/04/IMG_0531-1024x683.jpg' },
-   //       { id: 'photo1570296458538', edit: false, comment: 'stars in the sky', url: 'https://cdn-st1.rtr-vesti.ru/vh/pictures/hd/172/806/8.jpg' },
-   //       { id: 'photo1570296458539', edit: false, comment: 'field with spikelets', url: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg' },
-   //       { id: 'photo1570296458540', edit: false, comment: 'tree on a background of stars end', url: 'https://bigpicture.ru/wp-content/uploads/2011/06/1309.jpg' },
-   //    ]
-   // }
-
-
    handleChange(event) {
       this.setState(
          this.state.gallery.map(item => {
             if (item.edit) item.comment = event.target.value
             return item.comment
          })
-      )
-      localStorage.removeItem('gallery-react')
-      localStorage.setItem('gallery-react', JSON.stringify(this.state.gallery))
+      ) 
    }
 
    toggleInput(item) {
@@ -173,10 +156,14 @@ class Gallery extends React.Component {
                   className='gallery__input-change'
                   defaultValue={item.comment}
                   onChange={this.handleChange}
-                  onBlur={() => { this.toggleInput(item) }}
+                  onBlur={() => {
+                     this.toggleInput(item)
+                     this.updateLocalStor()
+                  }}
                   onKeyDown={e => {
                      if (e.keyCode === 13) {
                         this.toggleInput(item)
+                        this.updateLocalStor()
                      }
                   }}
                />
@@ -252,10 +239,7 @@ class Gallery extends React.Component {
          </div>
       )
    }
-
-
-
-
+ 
    render() {
       return (
          <div className='gallery'>
