@@ -25,7 +25,7 @@ class Gallery extends React.Component {
 
       this.state = {
          gallery: this.gallery,
-         urlGigImg: '',
+         urlBigImg: '',
          showImg: false,
          showModalAdd: false,
          newUrl: 'https://i.ytimg.com/vi/-6PdUhK1q3E/maxresdefault.jpg',
@@ -98,7 +98,7 @@ class Gallery extends React.Component {
       let clone = !this.state.showImg;
       this.setState({
          showImg: clone,
-         urlGigImg: url
+         urlBigImg: url
       })
    }
 
@@ -210,7 +210,7 @@ class Gallery extends React.Component {
             <div className='gallery__modal-big-img'
                onClick={e => { if (e.target.nodeName !== 'IMG') this.handleClickImg() }}
             >
-               <img src={this.state.urlGigImg} alt='Show imag' className='gallery__img-big gallery__img-big_js' />
+               <img src={this.state.urlBigImg} alt='Show imag' className='gallery__img-big gallery__img-big_js' />
             </div >
          )
       }

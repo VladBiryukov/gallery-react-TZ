@@ -6,7 +6,7 @@ function ItemGallry(props) {
    return (
       <div id={props.item.id}
          className='gallery__card' >
-         <img src={props.item.url} className='gallery__img' alt={props.item.id} />
+         <img src={props.item.url} onClick={props.onImg} className='gallery__img' alt={props.item.id} />
          <div className='gallery__box-comment'>
             <div className='gallery__comment'>{props.item.comment}</div>
          </div>
@@ -17,21 +17,55 @@ function ItemGallry(props) {
    )
 }
 
+function BidImg(props) {
+   return (
+      <div className='gallery__modal-big-img'
+         onClick={e => { if (e.target.nodeName !== 'IMG') props.onImg() }}>
+         <img alt='Show imag' className='gallery__img-big' src={props.url} />
+      </div>
+   )
+}
 
 class GalleryRedux extends React.Component {
 
    constructor(props) {
-      super(props);
+      super(props)
+      this.state = {
+         showImg: false,
+         urlGigImg: ''
+
+      }
       this.addItem = this.addItem.bind(this)
       this.removeItem = this.removeItem.bind(this)
+      this.handleClickImg = this.handleClickImg.bind(this)
    }
-
+   renderBigImg() {
+      if (this.state.showImg) {
+         return (
+            <BidImg
+               onImg={this.handleClickImg.bind(this)}
+               url={this.state.urlGigImg}
+            />
+         )
+      }
+   }
    addItem() {
       this.props.onAddItem(this.inputUrl.value, this.inputComment.value)
    }
    removeItem(id) {
       this.props.onCloseRemove(id)
    }
+
+   handleClickImg(url) {
+      url = url || ''
+      let clone = !this.state.showImg;
+      this.setState({
+         showImg: clone,
+         urlGigImg: url
+      })
+   }
+
+
 
    renderItemsGallery(props) {
       return props.gallery.map(item => {
@@ -40,6 +74,7 @@ class GalleryRedux extends React.Component {
                key={item.id}
                item={item}
                onClose={this.removeItem.bind(this, item.id)}
+               onImg={this.handleClickImg.bind(this, item.url)}
             />
          )
       })
@@ -53,7 +88,7 @@ class GalleryRedux extends React.Component {
                   <input style={{ marginLeft: '5px' }} placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
                   <input style={{ marginLeft: '5px' }} placeholder='Comment' ref={input => this.inputComment = input} />
                   <button onClick={this.addItem}>add item</button>
-
+                  {this.renderBigImg()}
                   <div className='gallery__box-cards'>
                      {this.renderItemsGallery(this.props)}
                   </div>
@@ -73,7 +108,7 @@ export default connect(
          let itemGallery = {
             id: `photo${+new Date()}`,
             edit: false,
-            comment: comment, 
+            comment: comment,
             url: url
          }
          dispatch({ type: 'ADD_ITEM_GALLERY', itemGallery })

@@ -25,10 +25,6 @@ if (!localStorage.getItem('gallery-redux')) {
 
 const initState = JSON.parse(localStorage.getItem('gallery-redux'));
 initState.map(item => item.edit = false);
-
-
-
-
 function initGallery(state = initState, action) {
     switch (action.type) {
         case 'ADD_ITEM_GALLERY': return [...state, action.itemGallery]
@@ -38,7 +34,6 @@ function initGallery(state = initState, action) {
     }
 }
 const store = createStore(initGallery)
-
 store.subscribe(() => {
     console.log(store.getState());
     let localStore = store.getState()
