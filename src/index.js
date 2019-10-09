@@ -44,7 +44,6 @@ store.subscribe(() => {
     let localStore = store.getState()
     localStorage.removeItem('gallery-redux');
     localStorage.setItem('gallery-redux', JSON.stringify(localStore));
-
 })
 
 
