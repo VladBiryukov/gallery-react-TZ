@@ -1,37 +1,37 @@
 import React from 'react';
-import './Gallery/Gallery'
+import './Gallery/gallery.css'
 import Gallery from './Gallery/Gallery'
 import './index.css'
-import { connect } from 'react-redux'
+// import { connect } from 'react-redux'
+import GalleryRedux from './GalleryRedux/GalleryRedux.js'
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.addItem = this.addItem.bind(this)
-    this.removeInput = this.removeInput.bind(this)
-    this.showImg = this.showImg.bind(this)
-  }
 
-  addItem() {
-    this.props.onAddItem(this.inputUrl.value, this.inputComment.value)
-  }
-  removeInput(id) {
-    this.props.onCloseRemove(id)
-  }
 
-  showImg(id){
+export default class App extends React.Component {
+  // constructor(props) {
+  //   super(props);
+  //   this.addItem = this.addItem.bind(this)
+  //   this.removeInput = this.removeInput.bind(this) 
+  // }
 
-  }
- 
+  // addItem() {
+  //   this.props.onAddItem(this.inputUrl.value, this.inputComment.value)
+  // }
+  // removeInput(id) {
+  //   this.props.onCloseRemove(id)
+  // }
+
+
   render() {
-    return(
-      <div className ='App'>
-        <Gallery/>
+    return (
+      <div className='App'>
+        <Gallery />
       </div>
     )
     return (
       <div className="App">
-        <input placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
+        <GalleryRedux />
+        {/* <input placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
         <input placeholder='Comment' ref={input => this.inputComment = input} />
         <button onClick={this.addItem}>add item</button>
 
@@ -50,30 +50,30 @@ class App extends React.Component {
               </div>
             )
           })}
-        </div> 
-      </div> 
+        </div>  */}
+      </div>
     );
   }
 }
 
-export default connect(
-  state => ({
-    gallery: state
-  }),
-  dispatch => ({
-    onAddItem: (url, comment) => {
-      let itemGallery = {
-        id: `photo${+new Date()}`,
-        edit: false,
-        comment: comment,
-        url: url
-      }
-      dispatch({ type: 'ADD_ITEM_GALLERY', itemGallery })
-    },
+// export default connect(
+//   state => ({
+//     gallery: state
+//   }),
+//   dispatch => ({
+//     onAddItem: (url, comment) => {
+//       let itemGallery = {
+//         id: `photo${+new Date()}`,
+//         edit: false,
+//         comment: comment,
+//         url: url
+//       }
+//       dispatch({ type: 'ADD_ITEM_GALLERY', itemGallery })
+//     },
 
-    onCloseRemove: (id) => {
-      dispatch({ type: 'REMOVE_ITEM_GALLERY', id })
-    }
+//     onCloseRemove: (id) => {
+//       dispatch({ type: 'REMOVE_ITEM_GALLERY', id })
+//     }
 
-  })
-)(App);
+//   })
+// )(App);
