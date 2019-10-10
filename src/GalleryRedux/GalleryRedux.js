@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 
 function ItemGallry(props) {
    return (
@@ -26,7 +26,7 @@ function EditItemGallry(props) {
             <textarea
                className='gallery__input-change'
                defaultValue={props.item.comment}
-               onKeyDown={event => { 
+               onKeyDown={event => {
                   if (event.keyCode === 13) {
                      props.editComment(event.target.value);
                      props.toggleInput();
@@ -141,14 +141,38 @@ class GalleryRedux extends React.Component {
    }
 
    render() {
+      const styles = {
+         controlBox: {
+            padding: '5px',
+         },
+         input: {
+            marginRight: '10px',
+            width: '210px', 
+            borderRadius: '3px',
+            padding: '10px 20px',
+            border: ' 1px solid black'
+         },
+         button: {
+            background: 'rgba(0, 1, 5, 0.86)',
+            color: 'white',
+            border: '1px solid gray',
+            borderRadius: '3px',
+            padding: '10px 20px',
+            textTransform: 'uppercase'
+         }
+      }
       return (
          <div className='gallery'>
             <div className='container'>
                <div className='gallery__block'>
-                  <input style={{ marginLeft: '5px' }} placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
-                  <input style={{ marginLeft: '5px' }} placeholder='Comment' ref={input => this.inputComment = input} />
-                  <button onClick={this.addItem}>add item</button>
                   {this.renderBigImg()}
+
+                  <div className='control-box' style={styles.controlBox}>
+                     <input style={styles.input} placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
+                     <input style={styles.input} placeholder='Comment' defaultValue='Произвольный текст' ref={input => this.inputComment = input} />
+                     <button style={styles.button} onClick={this.addItem}>add photo</button>
+                  </div>
+
                   <div className='gallery__box-cards'>
                      {this.renderItemsGallery(this.props)}
                   </div>
