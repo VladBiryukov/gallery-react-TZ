@@ -27,15 +27,35 @@ const initState = JSON.parse(localStorage.getItem('gallery-redux'));
 initState.map(item => item.edit = false);
 function initGallery(state = initState, action) {
     switch (action.type) {
-        case 'ADD_ITEM_GALLERY': return [...state, action.itemGallery]
-        case 'REMOVE_ITEM_GALLERY': return [...state].filter(item => item.id !== action.id)
+        case 'ADD_ITEM_GALLERY': return [...state, action.itemGallery];
+        case 'REMOVE_ITEM_GALLERY': return [...state].filter(item => item.id !== action.id);
+        case 'EDIT_COMMENT':
+            return [...state].map(item => {
+                if (item.edit) {
+                    item.comment = action.comment
+                }
+                return item
+            })
 
-        default: return state
+        case 'TOGGLE_INPUT':
+            let clone = [...state];
+            clone = clone.map(item => {
+                if (item.id === action.id) {
+                    item.edit = !item.edit;
+                    return item;
+                }
+                else {
+                    item.edit = false;
+                    return item;
+                } 
+            })
+            return clone;
+        default: return state;
     }
 }
 const store = createStore(initGallery)
 store.subscribe(() => {
-    console.log(store.getState());
+    console.log('store', store.getState());
     let localStore = store.getState()
     localStorage.removeItem('gallery-redux');
     localStorage.setItem('gallery-redux', JSON.stringify(localStore));
