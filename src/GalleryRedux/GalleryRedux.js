@@ -69,8 +69,8 @@ class GalleryRedux extends React.Component {
          showImg: false,
          urlGigImg: ''
 
-      }
-      this.addItem = this.addItem.bind(this)
+      };
+      this.addItem = this.addItem.bind(this);
       this.removeItem = this.removeItem.bind(this);
       this.handleClickImg = this.handleClickImg.bind(this);
       this.toggleInput = this.toggleInput.bind(this);
@@ -99,7 +99,7 @@ class GalleryRedux extends React.Component {
       this.setState({
          showImg: clone,
          urlGigImg: url
-      })
+      });
    }
 
    renderBigImg() {
@@ -114,7 +114,7 @@ class GalleryRedux extends React.Component {
    }
 
    renderItemsGallery(props) {
-      return props.gallery.map(item => {
+      return props.gallery.galleryItems.map(item => {
          if (!item.edit) {
             return (
                <ItemGallry
@@ -147,7 +147,7 @@ class GalleryRedux extends React.Component {
          },
          input: {
             marginRight: '10px',
-            width: '210px', 
+            width: '210px',
             borderRadius: '3px',
             padding: '10px 20px',
             border: ' 1px solid black'
