@@ -1,128 +1,141 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
-function ItemGallry(props) {
+import PropTypes from 'prop-types'
+function ItemGallry({ item, onClose, onImg, toggleInput }) {
    return (
-      <div id={props.item.id}
+      <div id={item.id}
          className='gallery__card' >
-         <img src={props.item.url} onClick={props.onImg} className='gallery__img' alt={props.item.id} />
-         <div className='gallery__box-comment' onClick={() => props.toggleInput()}>
-            <div className='gallery__comment'>{props.item.comment}</div>
+         <img src={item.url} onClick={onImg} className='gallery__img' alt={item.id} />
+         <div className='gallery__box-comment' onClick={() => toggleInput()}>
+            <div className='gallery__comment'>{item.comment}</div>
          </div>
          <div className='gallery__close'
-            onClick={props.onClose}
+            onClick={onClose}
          >&times;</div>
       </div>
    )
 }
+ItemGallry.propTypes = {
+   item: PropTypes.object,
+   onClose: PropTypes.func,
+   onImg: PropTypes.func,
+   toggleInput: PropTypes.func
+}
 
-function EditItemGallry(props) {
+
+function EditItemGallry({ item, onClose, onImg, editComment, toggleInput }) {
    return (
-      <div id={props.item.id}
+      <div id={item.id}
          className='gallery__card' >
-         <img src={props.item.url} onClick={props.onImg} className='gallery__img' alt={props.item.id} />
+         <img src={item.url} onClick={onImg} className='gallery__img' alt={item.id} />
          <div className='gallery__box-comment'>
 
             <textarea
                className='gallery__input-change'
-               defaultValue={props.item.comment}
+               defaultValue={item.comment}
                onKeyDown={event => {
                   if (event.keyCode === 13) {
-                     props.editComment(event.target.value);
-                     props.toggleInput();
+                     editComment(event.target.value);
+                     toggleInput();
                   }
                   else if (event.keyCode === 27) {
-                     props.toggleInput();
+                     toggleInput();
                   }
                }}
                onBlur={event => {
-                  props.editComment(event.target.value);
-                  props.toggleInput();
+                  editComment(event.target.value);
+                  toggleInput();
                }}
             />
 
          </div>
          <div className='gallery__close'
-            onClick={props.onClose}
+            onClick={onClose}
          >&times;</div>
       </div>
    )
 }
 
+EditItemGallry.propTypes = {
+   item: PropTypes.object.isRequired,
+   onClose: PropTypes.func,
+   onImg: PropTypes.func,
+   editComment: PropTypes.func,
+   toggleInput: PropTypes.func
+}
 
 
-
-function BidImg(props) {
+function BidImg({ onImg, url }) { 
    return (
       <div className='gallery__modal-big-img'
-         onClick={e => { if (e.target.nodeName !== 'IMG') props.onImg() }}>
-         <img alt='Show imag' className='gallery__img-big' src={props.url} />
+         onClick={e => { if (e.target.nodeName !== 'IMG') onImg() }}>
+         <img alt='Show imag' className='gallery__img-big' src={url} />
       </div>
    )
 }
 
+BidImg.propTypes = {
+   onImg: PropTypes.func,
+   url: PropTypes.string
+}
+
 class GalleryRedux extends React.Component {
 
-   constructor(props) {
-      super(props);
-      this.state = {
-         showImg: false,
-         urlGigImg: ''
-
-      };
-      this.addItem = this.addItem.bind(this);
-      this.removeItem = this.removeItem.bind(this);
-      this.handleClickImg = this.handleClickImg.bind(this);
-      this.toggleInput = this.toggleInput.bind(this);
-      this.editComment = this.editComment.bind(this);
+   state = {
+      showImg: false,
+      urlBigImg: ''
    }
 
-   addItem() {
+
+   addItem = () => {
       this.props.onAddItem(this.inputUrl.value, this.inputComment.value);
    }
-   removeItem(id) {
+   removeItem = id => {
       this.props.onCloseRemove(id);
    }
 
-   toggleInput(id, comment) {
+   toggleInput = (id, comment) => {
       this.props.toggleInput(id, comment);
    }
-   editComment(comment) {
+   editComment = (comment) => {
       this.props.editComment(comment);
    }
 
 
 
-   handleClickImg(url) {
+   handleClickImg = (url) => {
       url = url || ''
       let clone = !this.state.showImg;
       this.setState({
          showImg: clone,
-         urlGigImg: url
+         urlBigImg: url
       });
    }
 
-   renderBigImg() {
+   renderBigImg = () => {
       if (this.state.showImg) {
          return (
             <BidImg
-               onImg={this.handleClickImg.bind(this)}
-               url={this.state.urlGigImg}
+               onImg={this.handleClickImg}
+               url={this.state.urlBigImg}
             />
          )
       }
    }
 
-   renderItemsGallery(props) {
+   renderItemsGallery = props => {
       return props.gallery.galleryItems.map(item => {
          if (!item.edit) {
+            console.log('renderItems')
+            console.log(typeof item == 'object');
+
             return (
                <ItemGallry
                   key={item.id}
                   item={item}
-                  onClose={this.removeItem.bind(this, item.id)}
-                  onImg={this.handleClickImg.bind(this, item.url)}
-                  toggleInput={this.toggleInput.bind(this, item.id)}
+                  onClose={() => this.removeItem(item.id)}
+                  onImg={() => this.handleClickImg(item.url)}
+                  toggleInput={() => this.toggleInput(item.id)}
                />
             )
          }
@@ -130,13 +143,12 @@ class GalleryRedux extends React.Component {
             <EditItemGallry
                key={item.id}
                item={item}
-               onClose={this.removeItem.bind(this, item.id)}
-               onImg={this.handleClickImg.bind(this, item.url)}
-               editComment={this.editComment.bind(this)}
-               toggleInput={this.toggleInput.bind(this, item.id)}
+               onClose={() => this.removeItem(item.id)}
+               onImg={() => this.handleClickImg(item.url)}
+               editComment={this.editComment}
+               toggleInput={() => this.toggleInput(item.id)}
             />
          )
-
       })
    }
 
@@ -166,7 +178,7 @@ class GalleryRedux extends React.Component {
             <div className='container'>
                <div className='gallery__block'>
                   {this.renderBigImg()}
-
+                  {console.log('render()')}
                   <div className='control-box' style={styles.controlBox}>
                      <input style={styles.input} placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
                      <input style={styles.input} placeholder='Comment' defaultValue='Произвольный текст' ref={input => this.inputComment = input} />

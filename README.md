@@ -66,3 +66,11 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+1- деструкторизация
+
+ два типа дынных, state и props ,
+ state-внутреннее состояние компонента
+ данные state можно передавать в компоненты в виде props либо езменять, изменение вызывает переrender() компонента 
+ props - данные которые передаются от родителя к дочернему компонента , данные могут быть или использованы или в других компонентах 
+

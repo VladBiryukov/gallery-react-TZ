@@ -8,9 +8,8 @@ import { Provider } from 'react-redux';
 import reducer from './reducers';
 
 const store = createStore(reducer)
-store.subscribe(() => { 
+store.subscribe(() => {
     let localStore = store.getState();
-    console.log('gallery', localStore.galleryItems);
     localStorage.removeItem('gallery-redux');
     localStorage.setItem('gallery-redux', JSON.stringify(localStore.galleryItems));
 })
@@ -25,3 +24,8 @@ ReactDOM.render(
 );
 
 serviceWorker.unregister();
+
+
+
+
+ 
