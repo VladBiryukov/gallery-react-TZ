@@ -1,59 +1,89 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types'
-function ItemGallry({ item, onClose, onImg, toggleInput }) {
-   return (
-      <div id={item.id}
-         className='gallery__card' >
-         <img src={item.url} onClick={onImg} className='gallery__img' alt={item.id} />
-         <div className='gallery__box-comment' onClick={() => toggleInput()}>
-            <div className='gallery__comment'>{item.comment}</div>
+import PropTypes from 'prop-types';
+import './../index.css'
+class ItemGallry extends Component {
+   constructor(props) {
+      super(props);
+      this.state = {
+         props: props
+      }
+   }
+
+   shouldComponentUpdate(nextProps, nextState) {
+      return this.state.props !== nextState.props
+   }
+
+   render() {
+      const { item, onClose, onImg, toggleInput } = this.state.props;
+      return (
+         <div id={item.id}
+            className='gallery__card' >
+            <img src={item.url} onClick={onImg} className='gallery__img' alt={item.id} />
+            <div className='gallery__box-comment' onClick={() => toggleInput()}>
+               <div className='gallery__comment'>{item.comment}</div>
+            </div>
+            <div className='gallery__close'
+               onClick={onClose}
+            >&times;</div>
          </div>
-         <div className='gallery__close'
-            onClick={onClose}
-         >&times;</div>
-      </div>
-   )
+      )
+   }
 }
+
 ItemGallry.propTypes = {
-   item: PropTypes.object,
+   item: PropTypes.object.isRequired,
    onClose: PropTypes.func,
    onImg: PropTypes.func,
    toggleInput: PropTypes.func
 }
 
 
-function EditItemGallry({ item, onClose, onImg, editComment, toggleInput }) {
-   return (
-      <div id={item.id}
-         className='gallery__card' >
-         <img src={item.url} onClick={onImg} className='gallery__img' alt={item.id} />
-         <div className='gallery__box-comment'>
+class EditItemGallry extends Component {
+   constructor(props) {
+      super(props);
+      this.state = {
+         props: props
+      }
+   }
 
-            <textarea
-               className='gallery__input-change'
-               defaultValue={item.comment}
-               onKeyDown={event => {
-                  if (event.keyCode === 13) {
+   shouldComponentUpdate(nextProps, nextState) {
+      return this.state.props !== nextState.props
+   }
+
+   render() {
+      const { item, onClose, onImg, editComment, toggleInput } = this.state.props;
+      return (
+         <div id={item.id}
+            className='gallery__card' >
+            <img src={item.url} onClick={onImg} className='gallery__img' alt={item.id} />
+            <div className='gallery__box-comment'>
+
+               <textarea
+                  className='gallery__input-change'
+                  defaultValue={item.comment}
+                  onKeyDown={event => {
+                     if (event.keyCode === 13) {
+                        editComment(event.target.value);
+                        toggleInput();
+                     }
+                     else if (event.keyCode === 27) {
+                        toggleInput();
+                     }
+                  }}
+                  onBlur={event => {
                      editComment(event.target.value);
                      toggleInput();
-                  }
-                  else if (event.keyCode === 27) {
-                     toggleInput();
-                  }
-               }}
-               onBlur={event => {
-                  editComment(event.target.value);
-                  toggleInput();
-               }}
-            />
-
+                  }}
+               />
+            </div>
+            <div className='gallery__close'
+               onClick={onClose}
+            >&times;</div>
          </div>
-         <div className='gallery__close'
-            onClick={onClose}
-         >&times;</div>
-      </div>
-   )
+      )
+   }
+
 }
 
 EditItemGallry.propTypes = {
@@ -65,7 +95,7 @@ EditItemGallry.propTypes = {
 }
 
 
-function BidImg({ onImg, url }) { 
+function BidImg({ onImg, url }) {
    return (
       <div className='gallery__modal-big-img'
          onClick={e => { if (e.target.nodeName !== 'IMG') onImg() }}>
@@ -79,7 +109,7 @@ BidImg.propTypes = {
    url: PropTypes.string
 }
 
-class GalleryRedux extends React.Component {
+class GalleryRedux extends Component {
 
    state = {
       showImg: false,
@@ -126,9 +156,6 @@ class GalleryRedux extends React.Component {
    renderItemsGallery = props => {
       return props.gallery.galleryItems.map(item => {
          if (!item.edit) {
-            console.log('renderItems')
-            console.log(typeof item == 'object');
-
             return (
                <ItemGallry
                   key={item.id}
@@ -153,38 +180,16 @@ class GalleryRedux extends React.Component {
    }
 
    render() {
-      const styles = {
-         controlBox: {
-            padding: '5px',
-         },
-         input: {
-            marginRight: '10px',
-            width: '210px',
-            borderRadius: '3px',
-            padding: '10px 20px',
-            border: ' 1px solid black'
-         },
-         button: {
-            background: 'rgba(0, 1, 5, 0.86)',
-            color: 'white',
-            border: '1px solid gray',
-            borderRadius: '3px',
-            padding: '10px 20px',
-            textTransform: 'uppercase'
-         }
-      }
       return (
          <div className='gallery'>
             <div className='container'>
                <div className='gallery__block'>
                   {this.renderBigImg()}
-                  {console.log('render()')}
-                  <div className='control-box' style={styles.controlBox}>
-                     <input style={styles.input} placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
-                     <input style={styles.input} placeholder='Comment' defaultValue='Произвольный текст' ref={input => this.inputComment = input} />
-                     <button style={styles.button} onClick={this.addItem}>add photo</button>
+                  <div className='control-box' >
+                     <input className='input' placeholder='URL' defaultValue='https://2i.by/wp-content/uploads/2015/07/miniatyura1.jpg' ref={input => this.inputUrl = input} />
+                     <input className='input' placeholder='Comment' defaultValue='Произвольный текст' ref={input => this.inputComment = input} />
+                     <button className='button' onClick={this.addItem}>add photo</button>
                   </div>
-
                   <div className='gallery__box-cards'>
                      {this.renderItemsGallery(this.props)}
                   </div>

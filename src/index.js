@@ -13,9 +13,7 @@ store.subscribe(() => {
     localStorage.removeItem('gallery-redux');
     localStorage.setItem('gallery-redux', JSON.stringify(localStore.galleryItems));
 })
-
-
-
+ 
 ReactDOM.render(
     <Provider store={store}>
         <App />
